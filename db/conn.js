@@ -2,12 +2,12 @@ const {Sequelize} = require('sequelize')
 require('dotenv').config()
 
 const sequelize = new Sequelize(
-    process.env.DB_NAME,
-    process.env.DB_USER,
-    process.env.DB_PASSWORD,
+    process.env.MYSQL_DATABASE,
+    process.env.MYSQL_USER,
+    process.env.MYSQL_PASSWORD,
     {
-        host: process.env.DB_HOST,
-        port: process.env.DB_PORT,
+        host: process.env.MYSQL_HOST,
+        port: process.env.MYSQL_PORT,
         dialect: 'mysql',
         dialectOptions: {
             ssl: {
