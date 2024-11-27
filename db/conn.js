@@ -15,4 +15,18 @@ const sequelize = new Sequelize(
     }
 )
 
+// Teste de conexão
+sequelize.authenticate()
+    .then(() => {
+        console.log('Conexão estabelecida com sucesso.');
+        // Lista todas as tabelas
+        return sequelize.query('SHOW TABLES');
+    })
+    .then(([results]) => {
+        console.log('Tabelas no banco:', results);
+    })
+    .catch(err => {
+        console.error('Erro ao conectar com o banco:', err);
+    });
+
 module.exports = sequelize
