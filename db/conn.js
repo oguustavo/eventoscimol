@@ -1,16 +1,13 @@
 const {Sequelize} = require('sequelize')
+require('dotenv').config()
 
-const sequelize = new Sequelize('eventos2','root','',{
-
-    host:'localhost',
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
     dialect:'mysql',
+    dialectOptions: {
+        ssl: {
+            rejectUnauthorized: true,
+        }
+    }
 })
-
-try {
-    sequelize.authenticate()
-    console.log('conectamos')
-} catch (error) {
-    console.log(`não conectamos:${err}`)
-}
 
 module.exports = sequelize
