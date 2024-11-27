@@ -10,23 +10,26 @@ const sequelize = new Sequelize(
         port: process.env.DB_PORT,
         dialect: 'mysql',
         dialectOptions: {
-            ssl: false
-        }
+            ssl: {
+                require: true,
+                rejectUnauthorized: false
+            }
+        },
+        logging: console.log
     }
 )
 
-// Teste de conexão
+// Teste de conexão mais detalhado
 sequelize.authenticate()
     .then(() => {
         console.log('Conexão estabelecida com sucesso.');
-        // Lista todas as tabelas
         return sequelize.query('SHOW TABLES');
     })
     .then(([results]) => {
         console.log('Tabelas no banco:', results);
     })
     .catch(err => {
-        console.error('Erro ao conectar com o banco:', err);
+        console.error('Erro detalhado ao conectar:', err);
     });
 
 module.exports = sequelize

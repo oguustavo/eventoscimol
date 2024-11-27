@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
-    "dev": "nodemon ./index.js localhost 3000"
+    "dev": "nodemon ./index.js localhost 3000",
+    "sync": "node scripts/sync-db.js"
   },
   "keywords": [],
   "author": "",
