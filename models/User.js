@@ -1,27 +1,47 @@
-const {DataTypes} = require('sequelize')
-
+const { DataTypes } = require('sequelize')
+const bcryptjs = require('bcryptjs')
 const db = require('../db/conn')
 
-const User = db.define('User',{
-    name:{
+const User = db.define('User', {
+    name: {
         type: DataTypes.STRING,
-        require:true,
+        allowNull: false,
+        validate: {
+            notEmpty: true
+        }
     },
-    email:{
+    email: {
         type: DataTypes.STRING,
-        require:true,
+        allowNull: false,
+        unique: true,
+        validate: {
+            isEmail: true
+        }
     },
-    password:{
+    password: {
         type: DataTypes.STRING,
-        require:true,
+        allowNull: false,
+        validate: {
+            notEmpty: true
+        }
     },
-    matricula:{
+    matricula: {
         type: DataTypes.STRING,
-        require:false,
+        allowNull: true
     },
     imagem: {
         type: DataTypes.STRING,
         allowNull: true
     }
+}, {
+    hooks: {
+        beforeCreate: async (user) => {
+            if (user.password) {
+                const salt = await bcryptjs.genSalt(10)
+                user.password = await bcryptjs.hash(user.password, salt)
+            }
+        }
+    }
 })
+
 module.exports = User

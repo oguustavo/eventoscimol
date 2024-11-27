@@ -14,6 +14,7 @@ const Evento = require('./models/Evento')
 const User = require('./models/User')
 const EventosControllers = require('./controllers/EventosControllers')
 const Participacao = require('./models/Participacao')
+const Sugestao = require('./models/Sugestao')
 
 
 const eventosRoutes = require('./routes/eventosRoutes')
@@ -101,6 +102,9 @@ Participacao.belongsTo(User);
 
 Evento.hasMany(Participacao);
 Participacao.belongsTo(Evento);
+
+User.hasMany(Sugestao);
+Sugestao.belongsTo(User);
 
 function checkAuth(req, res, next) {
     if (!req.session.userid) {
