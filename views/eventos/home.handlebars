@@ -1,0 +1,553 @@
+{{!--  aqui vai ser os eventos  --}}
+        
+{{#if session.userid}}
+
+
+<div class="container mt-5">
+    {{#if message}}
+    <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <strong>{{message}}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {{/if}}
+    
+    <div class="text-center mb-5">
+        <div class="position-relative d-inline-block">
+            <span class="badge bg-primary-subtle text-primary mb-3 welcome-badge">
+                <i class="bi bi-calendar-event me-1"></i>Portal de Eventos
+            </span>
+            <h2 class="display-4 fw-bold mb-3">
+                <span class="gradient-text">Eventos</span>
+                <span class="text-primary">CIMOL</span>
+            </h2>
+            <div class="accent-line animated"></div>
+        </div>
+        <p class="lead text-muted mx-auto mt-3" style="max-width: 600px;">
+            Confira todos os eventos disponíveis e participe das atividades do CIMOL
+        </p>
+        <hr class="my-4 w-50 mx-auto">
+    </div>
+    <div class="notice-banner">
+        <div class="notice-content">
+            <span class="pulse-dot"></span>
+            <strong>Pré-Matrícula 2025:</strong> 
+            <a href="https://servicos.educacao.rs.gov.br/pse/srv/matricula.jsp?ACAO=acao5&fbclid=PAZXh0bgNhZW0CMTEAAaY6eSStxdkxBlcx_zOikNLwFVVhyB5mkCDwOmHZn3XHN7h_Dtr9P_9sxRQ_aem_qmikmkr3t9vgcHbg6QakrA" target="_blank" class="notice-link">
+                Acesse aqui
+                <i class="bi bi-arrow-right-short"></i>
+            </a>
+        </div>
+    </div>
+
+
+    
+    <h3 id="cursoNome" class="text-center mb-4"></h3>
+    <div id="sem-eventos" class="alert d-none mx-auto" style="max-width: 400px;">
+        <div class="p-4 bg-light border-start border-4 border-warning rounded-3 shadow-sm text-center">
+            <div class="mb-3">
+                <i class="bi bi-emoji-frown text-warning" style="font-size: 3rem;"></i>
+            </div>
+            <div>
+                <h4 class="mb-2 fw-bold">Sem eventos disponíveis</h4>
+                <p class="mb-0 text-muted">No momento não há eventos cadastrados para o curso selecionado.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" id="eventos-container">
+         {{#if hasSearch}}
+    <div class="alert alert-light border rounded shadow-sm mt-3 d-flex align-items-center">
+      <i class="bi bi-search me-2 text-primary fs-5"></i>
+      <span class="fw-bold text-dark">Buscando por:</span> 
+      <span class="ms-1 fst-italic text-muted">"{{search}}"</span>
+      <a href="/" class="btn btn-sm btn-outline-danger ms-auto d-flex align-items-center">
+        <i class="bi bi-x-lg me-1"></i> Limpar busca
+      </a>
+    </div>
+    {{#unless eventos.length}}
+        <div class="alert  mt-3 text-center">
+            <i class="bi bi-emoji-frown text-warning fs-4 mb-2 d-block"></i>
+            <p class="mb-0">Nenhum resultado encontrado para "{{search}}"</p>
+        </div>
+    {{/unless}}
+  {{/if}}
+        {{#each eventos}}
+            <div class="col-12 col-md-6 col-lg-4 mb-4 evento-card" data-curso="{{this.curso}}">
+                <a href="/eventos/evento/{{this.id}}" class="text-decoration-none">
+                    <div class="card h-100 shadow-lg">
+                        {{#if this.requerMatricula}}
+                            <div class="exclusive-ribbon">
+                                <i class="bi bi-star-fill me-2"></i>
+                                <span>EXCLUSIVO ALUNOS</span>
+                            </div>
+                        {{/if}}
+                        
+                        <img src="{{#if this.imagem}}/uploads/{{this.imagem}}{{else}}/img/Semanaeltro.png{{/if}}" 
+                             alt="{{#if this.imagem}}Imagem do evento{{else}}Imagem padrão do evento{{/if}}" 
+                             class="card-img-top">
+
+                        <div class="card-body">
+                            <h3 class="card-title text-primary">
+                                <i class=""></i>{{this.title}}
+                            </h3>
+                            <p class="card-text text-dark">
+                                <i class=""></i>{{this.descricao}}
+                            </p>
+                        </div>
+
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item text-dark">
+                                <i class="bi bi-mortarboard me-2"></i>
+                                <strong>Curso:</strong> {{this.curso}}
+                            </li>
+                            <li class="list-group-item text-dark">
+                                <i class="bi bi-calendar-check me-2"></i>
+                                <strong>Data Início:</strong> {{this.dataFormatada}}
+                            </li>
+                            <li class="list-group-item text-dark">
+                                <i class="bi bi-people me-2"></i>
+                                <strong>Participantes:</strong> 
+                                <span id="participantesContagem_{{this.id}}">{{this.participantesAtuais}}/{{this.participantes}}</span>
+                            </li>
+                        </ul>
+
+                        <div class="card-footer text-center py-2">
+                            <small class="text-body-secondary">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Clique para mais informações
+                            </small>
+                        </div>
+                    </div>
+                </a>
+                <div class="card-footer">
+                    {{#if this.isParticipating}}
+                        <button class="btn btn-danger w-100" id="cancelarBtn_{{this.id}}" onclick="cancelarParticipacao({{this.id}})">
+                            <i class="bi bi-x-circle me-2"></i>Cancelar Participação
+                        </button>
+                    {{else}}
+                        {{#if (isEventoEsgotado this)}}
+                            <h6 class="text-danger text-center mb-0">
+                                <i class="bi bi-exclamation-triangle me-2"></i>VAGAS ESGOTADAS
+                            </h6>
+                        {{else}}
+                            <button class="btn btn-primary w-100" id="participarBtn_{{this.id}}" onclick="participarEvento({{this.id}})">
+                                <i class="bi bi-check-circle me-2"></i>Participar
+                            </button>
+                        {{/if}}
+                    {{/if}}
+                </div>
+            </div>
+        {{/each}}
+    </div>
+
+    
+    <div class="modal fade" id="matriculaModal" tabindex="-1" aria-labelledby="matriculaModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title" id="matriculaModalLabel">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        Matrícula Necessária
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center p-4">
+                    <div class="mb-4">
+                        <i class="bi bi-mortarboard-fill text-warning" style="font-size: 3rem;"></i>
+                    </div>
+                    <h4 class="mb-3">Evento Exclusivo para Alunos</h4>
+                    <p class="mb-4">
+                        Para participar deste evento, é necessário ter uma matrícula cadastrada. 
+                        Deseja atualizar seu perfil agora?
+                    </p>
+                </div>
+                <div class="modal-footer justify-content-center border-0 pb-4">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-lg me-2"></i>
+                        Cancelar
+                    </button>
+                    <a href="/profile" class="btn btn-primary">
+                        <i class="bi bi-person-fill-gear me-2"></i>
+                        Atualizar Perfil
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<script src="/script/s.js"></script>
+
+<style>
+    
+    .curso-header {
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.curso-badge {
+    font-size: 1.2rem;
+    font-weight: 500;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.curso-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2) !important;
+}
+
+.curso-texto {
+    letter-spacing: 0.5px;
+}
+   .card {
+        border: none;
+        transition: transform 0.3s, box-shadow 0.3s;
+        border-radius: 10px;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-title {
+        font-size: 1.5em;
+        font-weight: bold;
+    }
+
+    .btn-danger {
+        transition: all 0.3s;
+    }
+
+    .btn-danger:hover {
+        transform: scale(1.05);
+    } 
+    .display-4 {
+    font-size: 2.8rem;
+    letter-spacing: -0.5px;
+}
+
+.lead {
+    font-size: 1.15rem;
+    line-height: 1.6;
+}
+.notice-banner {
+    position: fixed;
+    left: -140px;
+    top: 50%;
+    transform: rotate(-90deg);
+    background: linear-gradient(90deg, #007bff, #6610f2);
+    padding: 8px 20px;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    z-index: 1000;
+}
+
+.notice-content {
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.notice-link {
+    color: white;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.notice-link:hover {
+    color: #f0f0f0;
+    text-decoration: underline;
+}
+
+.pulse-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #fff;
+    border-radius: 50%;
+    display: inline-block;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+    }
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+    }
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+    }
+}
+
+.exclusive-ribbon {
+    position: absolute;
+    top: 25px;
+    right: -50px;
+    z-index: 2;
+    background: linear-gradient(45deg, #198754, #157347);
+    padding: 8px 50px;
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    transform: rotate(45deg);
+    width: 200px;
+    text-align: center;
+}
+
+.exclusive-ribbon::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 100%;
+    z-index: -1;
+    border-left: 3px solid #146c43;
+    border-right: 3px solid transparent;
+    border-bottom: 3px solid transparent;
+    border-top: 3px solid #146c43;
+}
+
+.exclusive-ribbon::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 100%;
+    z-index: -1;
+    border-left: 3px solid transparent;
+    border-right: 3px solid #146c43;
+    border-bottom: 3px solid transparent;
+    border-top: 3px solid #146c43;
+}
+
+.exclusive-ribbon span {
+    display: block;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.4);
+}
+
+.card {
+    overflow: hidden;
+}
+
+.card {
+    transition: transform 0.3s, box-shadow 0.3s;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.text-decoration-none:hover {
+    text-decoration: none !important;
+}
+
+.text-decoration-none:hover .card {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.text-decoration-none:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+.text-decoration-none .card-title,
+.text-decoration-none .card-text,
+.text-decoration-none .list-group-item {
+    color: inherit !important;
+}
+
+/* Mantém os botões fora do link clicável */
+.card-footer {
+    position: relative;
+    z-index: 2;
+}
+
+.welcome-badge {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    animation: slideDown 0.5s ease-out;
+    background: rgba(13, 110, 253, 0.1);
+    border: none;
+}
+
+.gradient-text {
+    background: linear-gradient(120deg, #2b4c7e, #1a237e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.accent-line.animated {
+    height: 4px;
+    width: 60px;
+    background: linear-gradient(90deg, #007bff, #6610f2);
+    margin: 0 auto;
+    border-radius: 2px;
+    animation: expandWidth 0.8s ease-out;
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes expandWidth {
+    from { width: 0; }
+    to { width: 60px; }
+}
+
+@media (max-width: 768px) {
+    .display-4 {
+        font-size: 2.2rem;
+    }
+}
+
+.evento-card {
+    transition: transform 0.3s ease;
+}
+
+.evento-card:hover {
+    transform: translateY(-15px);
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.evento-card:hover .card {
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.evento-card:hover .card-img-top {
+    transform: scale(1.05);
+}
+</style>
+
+{{!-- aqui é pra quem ainda nao se logou / carrolse de incio --}}
+{{else}}
+
+
+<div class="container mt-5">
+    <div class="text-center mb-5">
+        <div class="position-relative d-inline-block">
+            <span class="badge bg-primary-subtle text-primary mb-3 welcome-badge">
+                <i class="bi bi-calendar-event me-1"></i>Portal de Eventos
+            </span>
+            <h2 class="display-4 fw-bold mb-3">
+                <span class="gradient-text">Eventos</span>
+                <span class="text-primary">CIMOL</span>
+            </h2>
+            <div class="accent-line animated"></div>
+        </div>
+        <p class="lead text-muted mx-auto mt-3" style="max-width: 600px;">
+            Confira todos os eventos disponíveis e participe das atividades do CIMOL
+        </p>
+        <hr class="my-4 w-50 mx-auto">
+    </div>
+
+    <div class="row" id="eventos-container">
+        {{#each eventos}}
+            <div class="col-12 col-md-6 col-lg-4 mb-4 evento-card" data-curso="{{this.curso}}">
+                <a href="/eventos/evento/{{this.id}}" class="text-decoration-none">
+                    <div class="card h-100 shadow-lg">
+                        {{#if this.imagem}}
+                            <img src="/uploads/{{this.imagem}}" alt="Imagem do evento" class="img-fluid rounded" style="max-height: 200px; width: 100%; object-fit: cover;">
+                        {{else}}
+                            <img src="/img/Semanaeltro.png" alt="Imagem padrão do evento" class="img-fluid rounded" style="max-height: 200px; width: 100%; object-fit: cover;">
+                        {{/if}}
+
+                        <div class="card-body">
+                            <h3 class="card-title text-primary">{{this.title}}</h3>
+                            <p class="card-text text-dark">{{this.descricao}}</p>
+                        </div>
+
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item text-dark"><strong>Data:</strong> {{this.dataFormatada}}</li>
+                        </ul>
+
+                        <div class="card-footer text-center">
+                            <p class="text-muted mb-0">Clique para mais detalhes</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        {{/each}}
+    </div>
+</div>
+
+<style>
+    .evento-card {
+    transition: transform 0.3s ease;
+}
+
+.evento-card:hover {
+    transform: translateY(-15px);
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.evento-card:hover .card {
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.evento-card:hover .card-img-top {
+    transform: scale(1.05);
+}
+    .btn-lg {
+        padding: 0.75rem 2rem;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-lg:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+    }
+
+    /
+</style>
+
+{{/if}}
+        
+
+        

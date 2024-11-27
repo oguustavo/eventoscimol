@@ -1,0 +1,148 @@
+
+<div class="container mt-5">
+    <div class="text-center mb-5">
+        <p class="text-muted lead">Acompanhe e gerencie todos os eventos que você está participando</p>
+        <hr class="my-4 w-50 mx-auto">
+    </div>
+    
+    {{#if eventos.length}}
+
+     <div class="d-flex justify-content-between align-items-center mb-4">
+        <a href="/" class="btn btn-outline-primary d-flex align-items-center gap-2">
+            <i class="bi bi-arrow-left"></i>
+            Voltar
+        </a>
+    </div>
+     
+        <div class="row">
+            {{#each eventos}}
+                <div class="col-12 col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-lg d-flex flex-column position-relative">
+                        <div class="status-indicator active"></div>
+                        <li class="list-group-item"></li>
+                        {{#if this.imagem}}
+                            <img src="/uploads/{{this.imagem}}" alt="Imagem do evento" class="img-fluid rounded" style="max-height: 200px; width: 100%; object-fit: cover;">
+                        {{else}}
+                            <img src="/img/Semanaeltro.png" alt="Imagem padrão do evento" class="img-fluid rounded" style="max-height: 200px; width: 100%; object-fit: cover;">
+                        {{/if}}
+                        </li>
+
+                        <div class="card-body d-flex flex-column flex-grow-1">
+                            <h3 class="card-title text-primary">
+                                <i class="me-2"></i>{{this.title}}
+                            </h3>
+                            <p class="card-text">
+                                <i class="me-2"></i>{{this.descricao}}
+                            </p>
+                        </div>
+
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <i class="bi bi-person-video3 me-2"></i>
+                                <strong>Palestrantes:</strong> {{this.palestrantes}}
+                            </li>
+                            <li class="list-group-item">
+                                <i class="bi bi-geo-alt me-2"></i>
+                                <strong>Local:</strong> {{this.local}}
+                            </li>
+                            <li class="list-group-item">
+                                <i class="bi bi-mortarboard me-2"></i>
+                                <strong>Curso:</strong> {{this.curso}}
+                            </li>
+                            <li class="list-group-item">
+                                <i class="bi bi-calendar-check me-2"></i>
+                                <strong>Data Início:</strong> {{this.dataFormatada}}
+                            </li>
+                            <li class="list-group-item">
+                                <i class="bi bi-calendar-x me-2"></i>
+                                <strong>Data Final:</strong> {{this.dataFormatada}}
+                            </li>
+                            <li class="list-group-item">
+                                <i class="bi bi-clock me-2"></i>
+                                <strong>Duração:</strong> {{this.duracao}} dias
+                            </li>
+                            <li class="list-group-item">
+                                <i class="bi bi-people me-2"></i>
+                                <strong>Participantes:</strong> {{this.participantesAtuais}}/{{this.participantes}}
+                            </li>
+                        </ul>
+
+                        <div class="card-footer">
+                            <button class="btn btn-danger w-100" id="cancelarBtn_{{this.id}}" onclick="cancelarParticipacao({{this.id}})">
+                                <i class="bi bi-x-circle me-2"></i>
+                                <span id="btnText_{{this.id}}">Cancelar Participação</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            {{/each}}
+        </div>
+    {{else}}
+        <div class="empty-state text-center py-5">
+            <h3 class="text-primary mb-3">Nenhum evento encontrado</h3>
+            <p class="text-muted mb-4">Você ainda não está participando de nenhum evento. Que tal começar agora?</p>
+            <a href="/eventos" class="btn btn-primary btn-lg">
+                <i class="bi bi-calendar-plus me-2"></i>
+                Explorar Eventos
+            </a>
+        </div>
+    {{/if}}
+</div>
+
+
+
+<script src="/script/participando.js"></script>
+<style>
+    .card {
+        border: none;
+        transition: transform 0.3s, box-shadow 0.3s;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-title {
+        font-size: 1.5em;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .btn {
+        border-radius: 8px;
+        padding: 0.5rem 1.5rem;
+        font-size: 1.2rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border: none;
+    }
+
+    .btn-danger:hover {
+        transform: scale(1.05);
+    }
+
+    .status-indicator {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: #28a745;
+        border: 2px solid #fff;
+        box-shadow: 0 0 0 1px #28a745;
+        z-index: 1;
+        
+    }
+    
+</style>
+
+

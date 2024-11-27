@@ -1,0 +1,297 @@
+<div class="container mt-4">
+   
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="d-flex align-items-center mb-3">
+                <div class="avatar-container position-relative me-4">
+                    <div class="avatar-placeholder rounded-circle bg-primary d-flex align-items-center justify-content-center" 
+                         style="width: 120px; height: 120px; overflow: hidden; border: 3px solid #0d6efd;">
+                        {{#if user.imagem}}
+                            <img src="/uploads/{{user.imagem}}" 
+                                 alt="Profile" 
+                                 class="w-100 h-100 object-fit-cover">
+                        {{else}}
+                            <i class="fas fa-user fa-3x text-white"></i>
+                        {{/if}}
+                    </div>
+                    <button class="btn btn-sm btn-primary position-absolute bottom-0 end-0 rounded-circle" 
+                            style="width: 35px; height: 35px; padding: 0;"
+                            onclick="document.getElementById('imageInput').click()">
+                        <i class="fas fa-camera"></i>
+                    </button>
+                    <input type="file" 
+                           id="imageInput" 
+                           accept="image/*" 
+                           style="display: none;" 
+                           onchange="uploadImage(this)">
+                </div>
+                <div class="user-info">
+                    <h2 class="mb-2 fw-bold">{{user.name}}</h2>
+                    <p class="text-muted mb-1"><i class="fas fa-envelope me-2"></i>{{user.email}}</p>
+                    <p class="text-muted mb-2">
+                        <i class="fas fa-id-card me-2"></i>
+                        {{#if user.matricula}}{{user.matricula}}{{else}}Matrícula não cadastrada{{/if}}
+                    </p>
+                    <span class="badge bg-primary px-3 py-2">
+                        <i class="fas fa-calendar-check me-1"></i>
+                        {{participationCount}} Eventos
+                    </span>
+                </div>
+            </div>
+            <div id="imageMessage"></div>
+        </div>
+    </div>
+
+    <div class="row">
+       
+        <div class="col-md-6">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h4 class="card-title mb-4"><i class="fas fa-id-badge me-2"></i>Atualizar Matrícula</h4>
+                    <div id="matriculaMessage"></div>
+                    <form id="matriculaForm">
+                        <div class="form-group">
+                            <label for="matricula" class="form-label">Número de Matrícula:</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="matricula" 
+                                   name="matricula" 
+                                   value="{{user.matricula}}" 
+                                   placeholder="{{#if user.matricula}}{{user.matricula}}{{else}}Digite sua matrícula{{/if}}">
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-3 w-100">
+                            {{#if user.matricula}}Atualizar{{else}}Cadastrar{{/if}} Matrícula
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+       
+        <div class="col-md-6">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h4 class="card-title mb-4"><i class="fas fa-lock me-2"></i>Alterar Senha</h4>
+                    <div id="senhaMessage"></div>
+                    <form id="senhaForm">
+                        <div class="form-group mb-3">
+                            <label for="currentPassword" class="form-label">Senha Atual:</label>
+                            <input type="password" 
+                                   class="form-control" 
+                                   id="currentPassword" 
+                                   name="currentPassword" 
+                                   required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="newPassword" class="form-label">Nova Senha:</label>
+                            <input type="password" 
+                                   class="form-control" 
+                                   id="newPassword" 
+                                   name="newPassword" 
+                                   required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="confirmPassword" class="form-label">Confirmar Nova Senha:</label>
+                            <input type="password" 
+                                   class="form-control" 
+                                   id="confirmPassword" 
+                                   name="confirmPassword" 
+                                   required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            Alterar Senha
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<style>
+.card {
+    border: none;
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.form-control {
+    padding: 0.75rem;
+    border-radius: 8px;
+}
+
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+}
+
+.btn-primary {
+    padding: 0.75rem;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.alert {
+    border-radius: 8px;
+}
+
+.badge {
+    padding: 0.5em 1em;
+    font-weight: 500;
+}
+
+.card-title {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.form-label {
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.avatar-container {
+    position: relative;
+}
+
+.object-fit-cover {
+    object-fit: cover;
+}
+
+.avatar-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-placeholder {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.user-info h2 {
+    color: #1a237e;
+    font-size: 1.8rem;
+}
+
+.badge {
+    font-size: 0.9rem;
+    box-shadow: 0 2px 4px rgba(13, 110, 253, 0.2);
+}
+
+.text-muted {
+    color: #546e7a !important;
+}
+</style>
+
+<script>
+// Mover a função showMessage para fora do DOMContentLoaded
+function showMessage(elementId, message, isError = false) {
+    const messageDiv = document.getElementById(elementId);
+    messageDiv.innerHTML = `
+        <div class="alert alert-${isError ? 'danger' : 'success'} alert-dismissible fade show mb-3">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    
+    const matriculaForm = document.getElementById('matriculaForm');
+    matriculaForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        try {
+            const response = await fetch('/profile/update-matricula', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    matricula: document.getElementById('matricula').value
+                })
+            });
+
+            const data = await response.json();
+            showMessage('matriculaMessage', data.message, data.error);
+        } catch (error) {
+            showMessage('matriculaMessage', 'Erro ao atualizar matrícula', true);
+        }
+    });
+
+    
+    const senhaForm = document.getElementById('senhaForm');
+    senhaForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        try {
+            const response = await fetch('/profile/update-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    currentPassword: document.getElementById('currentPassword').value,
+                    newPassword: document.getElementById('newPassword').value,
+                    confirmPassword: document.getElementById('confirmPassword').value
+                })
+            });
+
+            const data = await response.json();
+            showMessage('senhaMessage', data.message, data.error);
+            
+            if (!data.error) {
+                this.reset(); 
+            }
+        } catch (error) {
+            showMessage('senhaMessage', 'Erro ao atualizar senha', true);
+        }
+    });
+});
+
+async function uploadImage(input) {
+    if (input.files && input.files[0]) {
+        const formData = new FormData();
+        formData.append('profileImage', input.files[0]);
+
+        try {
+            // Corrigir o caminho para incluir /eventos
+            const response = await fetch('/eventos/profile/update-image', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('Resposta do servidor:', data);
+
+            if (data.error) {
+                showMessage('imageMessage', data.message, true);
+                return;
+            }
+
+            // Atualizar a imagem exibida
+            const avatarContainer = document.querySelector('.avatar-placeholder');
+            avatarContainer.innerHTML = `<img src="${data.imagePath}" alt="Profile" class="w-100 h-100 object-fit-cover">`;
+            
+            showMessage('imageMessage', data.message, false);
+
+            // Adicionar um reload da página após sucesso
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+        } catch (error) {
+            console.error('Erro ao fazer upload:', error);
+            showMessage('imageMessage', 'Erro ao atualizar imagem: ' + error.message, true);
+        }
+    }
+}
+</script> 

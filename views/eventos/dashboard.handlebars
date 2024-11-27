@@ -1,0 +1,591 @@
+{{!-- Vitor doido --}}
+
+<div class="container my-5">
+
+   
+ <div class="container mt-5">
+    <!-- Painel de Estatísticas -->
+    <div class="row mb-4 g-4">
+        <div class="col-md-3">
+            <div class="card text-center bg-gradient shadow-lg h-100 border-0 rounded-4 hover-scale">
+                <div class="card-body d-flex flex-column justify-content-center py-4">
+                    <i class="bi bi-calendar-event mb-3" style="font-size: 2rem;"></i>
+                    <h5 class="fw-light">Total de Eventos</h5>
+                    <h2 class="display-5 fw-bold mb-0">{{estatisticas.totalEventos}}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center bg-success bg-gradient shadow-lg h-100 border-0 rounded-4 hover-scale">
+                <div class="card-body d-flex flex-column justify-content-center py-4">
+                    <i class="bi bi-play-circle mb-3" style="font-size: 2rem;"></i>
+                    <h5 class="fw-light">Eventos Ativos</h5>
+                    <h2 class="display-5 fw-bold mb-0">{{estatisticas.eventosAtivos}}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center bg-warning bg-gradient shadow-lg h-100 border-0 rounded-4 hover-scale">
+                <div class="card-body d-flex flex-column justify-content-center py-4">
+                    <i class="bi bi-chat-dots mb-3" style="font-size: 2rem;"></i>
+                    <h5 class="fw-light text-dark">Sugestões</h5>
+                    <h2 class="display-5 fw-bold text-dark mb-0">{{estatisticas.totalSugestoes}}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center bg-danger bg-gradient shadow-lg h-100 border-0 rounded-4 hover-scale">
+                <div class="card-body d-flex flex-column justify-content-center py-4">
+                    <i class="bi bi-people mb-3" style="font-size: 2rem;"></i>
+                    <h5 class="fw-light">Usuários/Alunos</h5>
+                    <h2 class="display-5 fw-bold mb-0">{{estatisticas.totalUsuarios}}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ações Principais -->
+    <div class="card text-center shadow-lg mb-5 border-0 rounded-4 bg-light">
+        <div class="card-body p-5">
+            <h2 class="card-title mb-3 display-6">Painel Administrativo</h2>
+            <h5 class="card-subtitle text-muted mb-4 fw-light">Gerencie todos os aspectos do site de eventos.</h5>
+            <div class="d-flex justify-content-center gap-4">
+                <button type="button" class="btn btn-primary btn-lg px-4 rounded-pill" data-bs-toggle="modal" data-bs-target="#eventoModal">
+                    <i class="bi bi-plus-circle me-2"></i> Criar Evento
+                </button>
+
+                <button type="button" class="btn btn-info btn-lg px-4 text-white rounded-pill" onclick="scrollToSugestoes()">
+                    <i class="bi bi-chat-dots me-2"></i> Ver Sugestões
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+  
+    
+    <div class="card mb-5 shadow-sm border-0">
+        <div class="card-header text-center bg-primary text-white">
+            <h3 class="m-0">Eventos no Ar</h3>
+        </div>
+        <div class="card-body">
+
+            
+            {{#if message}}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle-fill"></i> {{message}}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {{/if}}
+
+            
+            <div class="list-group">
+                <h3 id="cursoNome" class="text-center mb-4"></h3>
+    <div id="sem-eventos" class="alert text-center d-none">
+        <h4>Sem eventos para este curso</h4>
+        <p>No momento não há eventos cadastrados para o curso selecionado.</p>
+    </div>
+                <div class="container mt-5"></div>
+    <div class="row">
+        {{#each eventos}}
+            {{#if (isEventoAtivo this.datalimite)}}
+                <div class="col-12 col-md-6 col-lg-4 mb-4 evento-card" data-curso="{{this.curso}}">
+                    <div class="card h-100 shadow-lg d-flex flex-column">
+                        {{#if this.imagem}}
+                            <img src="/uploads/{{this.imagem}}" alt="Imagem do evento" class="img-fluid rounded" style="max-height: 200px; width: 100%; object-fit: cover;">
+                        {{else}}
+                            <img src="" alt="Imagem padrão do evento" class="img-fluid rounded" style="max-height: 200px; width: 100%; object-fit: cover;">
+                        {{/if}}
+
+                        <div class="card-body d-flex flex-column flex-grow-1">
+                            <h3 class="card-title text-primary">{{this.title}}</h3>
+                            <p class="card-text mb-auto">{{this.descricao}}</p>
+                        </div>
+
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item"><strong>Palestrantes:</strong> {{this.palestrantes}}</li>
+                            <li class="list-group-item"><strong>Local:</strong> {{this.local}}</li>
+                            <li class="list-group-item"><strong>Curso:</strong> {{this.curso}}</li>
+                            <li class="list-group-item"><strong>Data Início:</strong> {{this.dataFormatada}}</li>
+                            <li class="list-group-item"><strong>Data Final:</strong> {{this.dataLimiteFormatada}}</li>
+                            <li class="list-group-item"><strong>Duração:</strong> {{this.duracao}} dias</li>
+                            <li class="list-group-item"><strong>Participantes:</strong> <span id="participantesContagem_{{this.id}}">{{this.participantesAtuais}}/{{this.participantes}}</span></li>
+                        </ul>
+
+                        <div class="card-body text-start">
+                            <form action="/eventos/remove" method="POST" style="display:inline;">
+                                <input type="hidden" name="id" value="{{this.id}}">
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmRemoveModal{{this.id}}">
+                                    <i class="bi bi-trash"></i> Remover
+                                </button>
+                            </form>
+
+                            <div class="modal fade" id="confirmRemoveModal{{this.id}}" tabindex="-1" aria-labelledby="confirmRemoveModalLabel{{this.id}}" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-danger text-white">
+                                            <h5 class="modal-title" id="confirmRemoveModalLabel{{this.id}}">
+                                                <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar Exclusão
+                                            </h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body p-4">
+                                            <div class="text-center mb-4">
+                                                <i class="bi bi-trash-fill text-danger" style="font-size: 3rem;"></i>
+                                            </div>
+                                            <p class="text-center mb-1">Você está prestes a remover o evento:</p>
+                                            <h4 class="text-center text-danger mb-3">"{{this.title}}"</h4>
+                                            <p class="text-center text-muted">Esta ação não pode ser desfeita.</p>
+                                        </div>
+                                        <div class="modal-footer justify-content-center border-0 pb-4">
+                                            <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">
+                                                <i class="bi bi-x-lg me-2"></i>Cancelar
+                                            </button>
+                                            <form action="/eventos/remove" method="POST" style="display:inline;">
+                                                <input type="hidden" name="id" value="{{this.id}}">
+                                                <button type="submit" class="btn btn-danger px-4">
+                                                    <i class="bi bi-trash me-2"></i>Remover
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn btn-warning" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#eventoEditModal" 
+                                data-id="{{this.id}}"
+                                data-title="{{this.title}}"
+                                data-local="{{this.local}}"
+                                data-participantes="{{this.participantes}}"
+                                data-data="{{this.data}}"
+                                data-datalimite="{{this.datalimite}}"
+                                data-palestrantes="{{this.palestrantes}}"
+                                data-duracao="{{this.duracao}}"
+                                data-curso="{{this.curso}}"
+                                data-descricao="{{this.descricao}}"
+                                onclick="console.log('Data:', this.getAttribute('data-data'))">
+                                <i class="bi bi-pencil"></i> Editar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            {{/if}}
+        {{/each}}
+    </div>
+</div>
+            </div>
+
+        </div>
+    </div>
+    {{#if sugestoes}}
+    <section class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Sugestões Recentes</h4>
+        </div>
+        <div class="card-body">
+            <ul class="list-group">
+                {{#each sugestoes}}
+                    <li class="list-group-item hover-shadow">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="me-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <strong class="me-2">Nome:</strong> 
+                                    {{this.nome}}
+                                    {{#if (eq this.status 'lida')}}
+                                        <span class="badge bg-success ms-2">Lida</span>
+                                    {{else}}
+                                        <span class="badge bg-warning ms-2">Pendente</span>
+                                    {{/if}}
+                                </div>
+                                <div class="mb-2"><strong>Email:</strong> {{this.email}}</div>
+                                <div class="mb-2"><strong>Assunto:</strong> {{this.assunto}}</div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-primary btn-sm ver-mensagem" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#verMensagemModal"
+                                        data-id="{{this.id}}"
+                                        data-nome="{{this.nome}}"
+                                        data-mensagem="{{this.mensagem}}" 
+                                        data-assunto="{{this.assunto}}">
+                                    <i class="bi bi-eye"></i> Ver
+                                </button>
+                                <button class="btn btn-success btn-sm marcar-lida" 
+                                        data-id="{{this.id}}"
+                                        {{#if (eq this.status 'lida')}}disabled{{/if}}>
+                                    <i class="bi bi-check-circle"></i> Lida
+                                </button>
+                                <button class="btn btn-danger btn-sm excluir-sugestao" 
+                                        data-id="{{this.id}}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </li>
+                {{/each}}
+            </ul>
+        </div>
+    </section>
+
+    
+    <div class="modal fade" id="verMensagemModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">Mensagem de <span id="modalNome"></span></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Assunto: <h6 class="fw-bold mb-3" id="modalAssunto"></h6>
+                    Mensagem: <p class="mb-0" id="modalMensagem"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{{/if}}
+
+
+</div>
+
+
+
+
+
+
+
+{{!-- crinado --}}
+<div class="modal fade" id="eventoModal" tabindex="-1" aria-labelledby="eventoModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header text-white justify-content-center">
+        <h2 class="modal-title" id="eventoModalLabel">Criando Novo Evento</h2>
+        <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4">
+        <form action="/eventos/add" method="POST" enctype="multipart/form-data">
+
+          <div class="mb-4">
+            <label for="imagem" class="form-label fw-bold">Imagem do Evento:</label>
+            <input type="file" id="imagem" name="imagem" class="form-control" accept="image/*">
+            <small class="text-muted">Selecione uma imagem para o card do evento (opcional)</small>
+          </div>
+
+          <div class="mb-3">
+            <label for="title" class="form-label fw-bold">Título:</label>
+            <input type="text" id="title" name="title" class="form-control" placeholder="Digite o título do evento" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="local" class="form-label fw-bold">Local:</label>
+            <input type="text" id="local" name="local" class="form-control" placeholder="Digite o local do evento" required>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col">
+              <label for="data" class="form-label fw-bold">Data do Evento:</label>
+              <input type="date" id="data" name="data" class="form-control" required>
+            </div>
+            <div class="col">
+              <label for="datalimite" class="form-label fw-bold">Até o Dia:</label>
+              <input type="date" id="datalimite" name="datalimite" class="form-control" required>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="duracao" class="form-label fw-bold">Duração (horas):</label>
+            <input type="number" id="duracao" name="duracao" class="form-control" placeholder="Duração do evento em horas" min="1">
+          </div>
+
+          <div class="mb-3">
+            <label for="curso" class="form-label fw-bold">Curso Relacionado:</label>
+            <select id="curso" name="curso" class="form-select">
+              <option value="" disabled selected>Selecione o curso associado ao evento</option>
+              <option value="nenhum">Nenhum curso relacionado</option>
+              <option value="eletronica">Eletrônica</option>
+              <option value="eletrotecnica">Eletrotécnica</option>
+              <option value="moveis">Móveis</option>
+              <option value="mecanica">Mecânica</option>
+              <option value="quimica">Química</option>
+              <option value="informatica">Informática</option>
+              <option value="meio ambiente">Meio Ambiente</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="participantes" class="form-label fw-bold">Número de Participantes:</label>
+            <input type="number" id="participantes" name="participantes" class="form-control" placeholder="Quantidade máxima de participantes" min="1" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="palestrantes" class="form-label fw-bold">Palestrantes:</label>
+            <input type="text" id="palestrantes" name="palestrantes" class="form-control" placeholder="Nomes dos palestrantes (separados por vírgula)">
+          </div>
+
+          <div class="mb-3">
+            <label for="descricao" class="form-label fw-bold">Descrição:</label>
+            <textarea id="descricao" name="descricao" class="form-control" placeholder="Descreva o evento" rows="4" required></textarea>
+          </div>
+
+          <div class="mb-3">
+            <div class="form-check">
+                <input type="checkbox" id="requerMatricula" name="requerMatricula" class="form-check-input">
+                <label for="requerMatricula" class="form-check-label fw-bold">
+                    Exigir matrícula para participação
+                </label>
+                <small class="form-text text-muted d-block">
+                    Se marcado, apenas usuários com matrícula cadastrada poderão participar
+                </small>
+            </div>
+          </div>
+
+          <div class="text-center mt-4">
+            <input type="submit" value="Criar Evento" class="btn btn-primary w-100 py-2 fw-bold rounded-pill">
+          </div>
+          
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal fade" id="eventoEditModal" tabindex="-1" aria-labelledby="eventoEditModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white justify-content-center">
+        <h2 class="modal-title" id="eventoEditModalLabel">Editando Evento</h2>
+        <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4">
+        <form action="/eventos/edit" method="POST">
+          <input type="hidden" name="id" value="{{evento.id}}">
+
+          <div class="mb-3">
+            <label for="title" class="form-label fw-bold">Título:</label>
+            <input type="text" id="title" name="title" class="form-control" value="{{evento.title}}" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="local" class="form-label fw-bold">Local:</label>
+            <input type="text" id="local" name="local" class="form-control" value="{{evento.local}}" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="participantes" class="form-label fw-bold">Participantes:</label>
+            <input type="number" id="participantes" name="participantes" class="form-control" value="{{evento.participantes}}" required>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col">
+              <label for="data" class="form-label fw-bold">Data de Início:</label>
+              <input type="date" id="data" name="data" class="form-control" value="{{evento.data}}" required>
+            </div>
+            <div class="col">
+              <label for="datalimite" class="form-label fw-bold">Data Limite:</label>
+              <input type="date" id="datalimite" name="datalimite" class="form-control" value="{{evento.datalimite}}" required>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="palestrantes" class="form-label fw-bold">Palestrantes:</label>
+            <input type="text" id="palestrantes" name="palestrantes" class="form-control" value="{{evento.palestrantes}}">
+          </div>
+
+          <div class="mb-3">
+            <label for="duracao" class="form-label fw-bold">Duração (dias):</label>
+            <input type="number" id="duracao" name="duracao" class="form-control" value="{{evento.duracao}}" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="curso" class="form-label fw-bold">Curso Relacionado:</label>
+            <select id="curso" name="curso" class="form-select" required>
+              <option value="" disabled selected>Selecione o curso associado ao evento</option>
+              <option value="nenhum">Nenhum curso relacionado</option>
+              <option value="eletronica">Eletrônica</option>
+              <option value="eletrotecnica">Eletrotécnica</option>
+              <option value="moveis">Móveis</option>
+              <option value="mecanica">Mecânica</option>
+              <option value="quimica">Química</option>
+              <option value="informatica">Informática</option>
+              <option value="meio_ambiente">Meio Ambiente</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="descricao" class="form-label fw-bold">Descrição:</label>
+            <textarea id="descricao" name="descricao" class="form-control" rows="4">{{evento.descricao}}</textarea>
+          </div>
+
+          <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary w-100 py-2 fw-bold rounded-pill">Salvar Alterações</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<script src="/script/s.js"></script>
+{{!-- nao mexer, modal boostrap, gugu --}}
+<script>
+  
+    document.addEventListener('DOMContentLoaded', function () {
+        var eventoEditModal = document.getElementById('eventoEditModal');
+        eventoEditModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+
+           
+            function formatarData(dataString) {
+                if (!dataString) return '';
+                
+                
+                console.log('Data original:', dataString);
+                
+                
+                let data = new Date(dataString).toISOString().split('T')[0];
+                
+               
+                console.log('Data formatada:', data);
+                
+                return data;
+            }
+
+            
+            var data = formatarData(button.getAttribute('data-data'));
+            var datalimite = formatarData(button.getAttribute('data-datalimite'));
+            
+            var modal = eventoEditModal;
+            modal.querySelector('input[name="id"]').value = button.getAttribute('data-id');
+            modal.querySelector('input[name="title"]').value = button.getAttribute('data-title');
+            modal.querySelector('input[name="local"]').value = button.getAttribute('data-local');
+            modal.querySelector('input[name="participantes"]').value = button.getAttribute('data-participantes');
+            modal.querySelector('input[name="data"]').value = data;
+            modal.querySelector('input[name="datalimite"]').value = datalimite;
+            modal.querySelector('input[name="palestrantes"]').value = button.getAttribute('data-palestrantes');
+            modal.querySelector('input[name="duracao"]').value = button.getAttribute('data-duracao');
+            modal.querySelector('select[name="curso"]').value = button.getAttribute('data-curso');
+            modal.querySelector('textarea[name="descricao"]').value = button.getAttribute('data-descricao');
+        });
+    });
+
+   
+    document.getElementById('data').addEventListener('change', setMinDateLimite);
+    
+    function setMinDateLimite() {
+        const dataEvento = new Date(document.getElementById('data').value);
+        dataEvento.setDate(dataEvento.getDate() + 1); 
+        document.getElementById('datalimite').min = dataEvento.toISOString().split('T')[0];
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+    
+    const verMensagemBtns = document.querySelectorAll('.ver-mensagem');
+    verMensagemBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const nome = this.dataset.nome;
+            const assunto = this.dataset.assunto;
+            const mensagem = this.dataset.mensagem;
+            
+            document.getElementById('modalNome').textContent = nome;
+            document.getElementById('modalAssunto').textContent = assunto;
+            document.getElementById('modalMensagem').textContent = mensagem;
+        });
+    });
+
+    
+    const marcarLidaBtns = document.querySelectorAll('.marcar-lida');
+    marcarLidaBtns.forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const id = this.dataset.id;
+            try {
+                const response = await fetch(`/eventos/sugestoes/${id}/marcar-lida`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    this.disabled = true;
+                    this.closest('li').querySelector('.badge').className = 'badge bg-success ms-2';
+                    this.closest('li').querySelector('.badge').textContent = 'Lida';
+                    showToast('Sugestão marcada como lida!', 'success');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                showToast('Erro ao marcar sugestão como lida', 'error');
+            }
+        });
+    });
+
+    
+    const excluirBtns = document.querySelectorAll('.excluir-sugestao');
+    excluirBtns.forEach(btn => {
+        btn.addEventListener('click', async function() {
+            if (confirm('Tem certeza que deseja excluir esta sugestão?')) {
+                const id = this.dataset.id;
+                try {
+                    const response = await fetch(`/eventos/sugestoes/${id}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (response.ok) {
+                        this.closest('li').remove();
+                        showToast('Sugestão excluída com sucesso!', 'success');
+                    }
+                } catch (error) {
+                    console.error('Erro:', error);
+                    showToast('Erro ao excluir sugestão', 'error');
+                }
+            }
+        });
+    });
+
+    
+    function showToast(message, type) {
+        const toastDiv = document.createElement('div');
+        toastDiv.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0 position-fixed bottom-0 end-0 m-3`;
+        toastDiv.setAttribute('role', 'alert');
+        toastDiv.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">${message}</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        `;
+        document.body.appendChild(toastDiv);
+        const toast = new bootstrap.Toast(toastDiv);
+        toast.show();
+        setTimeout(() => toastDiv.remove(), 3000);
+    }
+});
+
+function scrollToSugestoes() {
+    const sugestoesSection = document.querySelector('section.card');
+    if (sugestoesSection) {
+        sugestoesSection.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+</script>
+
+<style>
+.hover-scale {
+    transition: transform 0.2s ease-in-out;
+}
+
+.hover-scale:hover {
+    transform: scale(1.03);
+}
+
+.bg-gradient {
+    background-image: linear-gradient(180deg, rgba(255,255,255,0.15), rgba(255,255,255,0));
+}
+</style>

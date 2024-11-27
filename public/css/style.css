@@ -1,0 +1,142 @@
+* {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+    
+}
+#logo img {
+    height: 60px;
+}
+
+.edit{
+    border-radius: 15px 5px;
+}
+.nav-link {
+    color: #fff !important;
+    transition: color 0.3s;
+}
+
+.nav-link:hover {
+    color: #ffd700; 
+}
+.modal-header{
+    background:  #007bff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.container {
+    margin-top: 30px;
+}
+.message {
+    padding: 1em;
+    color: #004085;
+    background-color: #cce5ff;
+    border: 1px solid #b8daff;
+    border-radius: 5px;
+    text-align: center;
+    margin: 0 auto 2em;
+    max-width: 60%;
+}
+
+.containerUser{
+    min-height: 54vh;
+}
+
+.gradient-custom-2 {
+    background: rgb(41, 9, 121);
+    background: linear-gradient(90deg, rgba(41, 9, 121, 1) 0%, rgba(0, 212, 255, 1) 61%);
+}
+#navbar{
+    padding: 1.2em 1.4em;
+    margin-bottom: 1em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--bs-primary);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+#navbar a{
+    color: white;
+}
+#navbar ul{
+    display: flex;
+    list-style: none;
+    gap: 1.5em;
+}
+
+#navbar ul li{
+    margin-left: 0;
+}
+
+#navbar ul li a{
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5em 1em;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+}
+
+#navbar ul li a:hover{
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+#navbar ul li a i {
+    font-size: 1.1em;
+}
+
+@keyframes navFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#navbar {
+    animation: navFadeIn 0.5s ease-out;
+}
+
+#logo img {
+    height: 60px;
+    transition: transform 0.3s ease;
+}
+
+#logo img:hover {
+    transform: scale(1.05);
+}
+
+@media (min-width: 768px) {
+    .gradient-form {
+        height: 100vh !important;
+    }
+}
+@media (max-width: 979px) and (min-width: 519px){ 
+    .containerUser{
+        min-height: 42.5vh;
+    }
+}
+@media (max-width: 518px){
+    .containerUser{
+        min-height: 28vh;
+    }
+}
+@media (min-width: 769px) {
+    .gradient-custom-2 {
+        border-top-right-radius: .3rem;
+        border-bottom-right-radius: .3rem;
+    }
+}
+/* Adicionar ao seu arquivo CSS */
+:root {
+    transition: color-scheme 0.3s ease, background-color 0.3s ease;
+}
