@@ -4,7 +4,7 @@ const path = require('path')
 const Participacao = require('../models/Participacao');
 const {Op} = require('sequelize')
 const Sugestao = require('../models/Sugestao');
-const bcrypt = require('bcrypt');
+const bcryptjs = require('bcryptjs');
 const sequelize = require('sequelize');
 
 module.exports = class EventosControllers {
@@ -720,7 +720,7 @@ static async cancelarParticipacao(req, res) {
             }
 
             const user = await User.findByPk(userId);
-            const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
+            const isPasswordValid = await bcryptjs.compare(currentPassword, user.password);
             
             if (!isPasswordValid) {
                 return res.json({
@@ -729,15 +729,15 @@ static async cancelarParticipacao(req, res) {
                 });
             }
 
-            if (await bcrypt.compare(newPassword, user.password)) {
+            if (await bcryptjs.compare(newPassword, user.password)) {
                 return res.json({
                     error: true,
                     message: 'A nova senha não pode ser igual à senha atual'
                 });
             }
 
-            const salt = await bcrypt.genSalt(10);
-            const hashedPassword = await bcrypt.hash(newPassword, salt);
+            const salt = await bcryptjs.genSalt(10);
+            const hashedPassword = await bcryptjs.hash(newPassword, salt);
 
             await User.update(
                 { password: hashedPassword },

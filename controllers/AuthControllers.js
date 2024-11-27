@@ -1,6 +1,6 @@
 const { UPDATE } = require('sequelize/lib/query-types')
 const User = require('../models/User')
-const bcrypt = require('bcrypt')
+const bcryptjs = require('bcryptjs')
 
 module.exports = class AuthControllers {
 
@@ -27,7 +27,7 @@ module.exports = class AuthControllers {
             return
         }
 
-        const passwordMatch = bcrypt.compareSync(password, user.password)
+        const passwordMatch = bcryptjs.compareSync(password, user.password)
 
         if (!passwordMatch) {
             req.flash('message', 'Senha incorreta')
@@ -63,8 +63,8 @@ module.exports = class AuthControllers {
             return
         }
 
-        const salt = bcrypt.genSaltSync(10)
-        const hashedPassword = bcrypt.hashSync(password, salt)
+        const salt = bcryptjs.genSaltSync(10)
+        const hashedPassword = bcryptjs.hashSync(password, salt)
 
         const user = {
             name,
