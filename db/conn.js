@@ -10,10 +10,9 @@ const sequelize = new Sequelize(
         port: process.env.DB_PORT,
         dialect: 'mysql',
         dialectOptions: {
-            ssl: {
-                rejectUnauthorized: true,
-            }
-        }
+            ssl: 'Amazon RDS'
+        },
+        logging: false
     }
 )
 

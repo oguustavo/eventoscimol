@@ -116,13 +116,23 @@ function checkAuth(req, res, next) {
     next();
 }
 
+// Adicione um middleware de erro global
+app.use((err, req, res, next) => {
+    console.error(err.stack)
+    res.status(500).send('Algo deu errado!')
+})
+
 const PORT = process.env.PORT || 3000;
 
+// Modifique a inicialização
 conn
     .sync()
-    //.sync({force:true})
     .then(() => {
-        console.log('Banco de dados sincronizado');
-        app.listen(PORT);
+        console.log('Banco de dados sincronizado')
+        app.listen(PORT, () => {
+            console.log(`Servidor rodando na porta ${PORT}`)
+        })
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+        console.error('Erro ao sincronizar banco:', err)
+    })
